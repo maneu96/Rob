@@ -9,6 +9,7 @@ function [ O ] = direct_kinematics( A1,A2,A3,A4,A5,A6)
 %               1            0            0];
 % T_x= @(a) [a;0;0];
 % T_z= @(d) [0;0;d];
+
 T= @(alpha,a,d,theta) [cos(theta)              -sin(theta)              0           a;
                        sin(theta)*cos(alpha)   cos(theta)*cos(alpha)    -sin(alpha) -sin(alpha)*d;
                        sin(theta)*sin(alpha)   cos(theta)*sin(alpha)    cos(alpha)  cos(alpha)*d;
@@ -28,8 +29,6 @@ Transf= eye(4);
 for i=1:size(Table,1)
     Transf=Transf* T(Table(i,1),Table(i,2),Table(i,3),Table(i,4));
 end
-
-
 %% Euler angles
 R = Transf(1:3,1:3);
 

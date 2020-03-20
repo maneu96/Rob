@@ -50,13 +50,14 @@ teta2_2 = -teta2
 teta3_2 = teta3 + pi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%falta testar
+%falta testar - nao da para testar no simulador devido as restricoes das
+%joints no braco
 
 teta1_novo = teta1
 
 %teta2_novo = 90 - (aux_phi_2 - aux_phi_1)
-teta2_novo = 180 - (aux_phi_2 + aux_phi_1)
+teta2_novo = (180 - (aux_phi_2 + aux_phi_1))*pi/180
 
-teta3_novo = (360 - (aux_phi_3 + 90))-aux_simplified
+teta3_novo = ((360 - (aux_phi_3 + 90))-aux_simplified)*pi/180
 
 end
