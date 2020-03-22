@@ -203,8 +203,10 @@ if(Teta5>-1e-6 && Teta5<1e-6)
     Teta6 = acos(R3_6(3,3))
     
 else
-    Teta6 = asin(R3_6(1,2)/(sin(Teta5)))
-    Teta4 = asin(R3_6(2,1)/(sin(Teta5)))
+    %Teta6 = asin(R3_6(1,2)/(sin(Teta5)))
+    Teta6 = atan2(R3_6(1,2),R3_6(1,3))
+    %Teta4 = asin(R3_6(2,1)/(sin(Teta5)))
+    Teta4 = atan2(-R3_6(2,1),R3_6(3,1))
 end
 
 
