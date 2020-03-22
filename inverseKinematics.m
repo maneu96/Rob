@@ -38,8 +38,15 @@ X0_3 = P_base_wrist(1);
 Y0_3 = P_base_wrist(2);
 Z0_3 = P_base_wrist(3);
 
-teta1 = (atan2d(Y0_3, X0_3))*pi/180
+%%%%%%%%%%%% O mais provavel e isto estar mal %%%%%%%%%%%%%%%%%%%%%
+teta1 = (atan2d(Y0_3, X0_3))*pi/180;
 
+if(X0_3>=-30 && X0_3<0)
+    teta1 = teta1-pi;
+end
+
+teta1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 r1 = sqrt((X0_3^2)+(Y0_3^2));
 
 r2 = Z0_3 - (Base+Shoulder);
@@ -56,6 +63,8 @@ aux_phi_3 = acosd(((r3^2)-(d_aux^2)-(Arm^2))/(-2*d_aux*Arm));
 
 teta2 = -(90 - (aux_phi_1 + aux_phi_2))*pi/180
 
+
+%%%%%%%%%%%%%%%%%%%%%%%% Verificar se isto esta certo %%%%%%%%%%%%%%%%%%
 aux_simplified = -asind(Elbow1/d_aux);
 if (X0_3<0)
     aux_simplified = -aux_simplified;
@@ -63,13 +72,13 @@ end
 
 teta3 = (aux_phi_3 - 90 + aux_simplified)*pi/180
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % teta1_2 = teta1 + pi
 % teta2_2 = -teta2
 % teta3_2 = teta3 + pi
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %falta testar - nao da para testar no simulador devido as restricoes das
 %joints no braco
 
@@ -135,13 +144,10 @@ R3_6 = R0_3\R_base_tool;
 %Step 4: Forward Kinematics on the last 3 joints and pull out the rotation
 %part, R3_6
 
-%Igual a do video
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Step 5: Specify what you want the rotation matrix R0_6 to be
 
 % ZYZ como esta no enunciado
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Step 6: Given a desired X,Y and Z position, solve for the first 3 joints
