@@ -70,7 +70,7 @@ if (X0_3<0)
     aux_simplified = -aux_simplified;
 end
 
-teta3 = (aux_phi_3 - 90 + aux_simplified)*pi/180
+teta3 = -(aux_phi_3 - 90 + aux_simplified)*pi/180
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -115,22 +115,16 @@ teta3 = (aux_phi_3 - 90 + aux_simplified)*pi/180
 
 TBase_J1 = [1 0 0 0;
             0 1 0 0;
-            0 0 1 Base;
+            0 0 1 0;
             0 0 0 1];
 
-TJ1_J2 = homo_matrix_andre(teta1,[0,0,Shoulder],"z");
+TJ1_J2 = homo_matrix_andre(teta1,[0,0,0],"z");
 
-aux_x = Arm * sind((teta2*180/pi));
-aux_z = Arm * cosd((teta2*180/pi));
-TJ2_J3 = homo_matrix_andre(teta2,[aux_x,0,aux_z],"y");
+TJ2_J3 = homo_matrix_andre(teta2,[0,0,0],"y");
 
-aux_x = Elbow2 * cosd((teta3*180/pi)) + Elbow1 * sind((teta3*180/pi));
-aux_z = -Elbow2 * sind((teta3*180/pi)) + Elbow1 * cosd((teta3*180/pi));
-TJ3_J4 = homo_matrix_andre(teta3,[aux_x,0,aux_z],"y");
+TJ3_J4 = homo_matrix_andre(teta3,[0,0,0],"y");
 
-TJ4_J5 = homo_matrix_andre(0,[Forearm,0,0],"x");
-
-T0_3 = TBase_J1*TJ1_J2*TJ2_J3*TJ3_J4*TJ4_J5;
+T0_3 = TBase_J1*TJ1_J2*TJ2_J3*TJ3_J4;
 
 R0_3 = T0_3(1:3,1:3);
 
