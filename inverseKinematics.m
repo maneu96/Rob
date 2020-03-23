@@ -32,7 +32,7 @@ T_base_tool = [R_base_tool, P_base_tool;
                0, 0, 0, 1];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Calcular a posicao da joint 5
-P_base_wrist = T_base_tool*[-Wrist 0 Hand 1]';
+P_base_wrist = T_base_tool*[-Wrist 0 0 1]';
 P_base_wrist = P_base_wrist(1:3);
 
 %posicao A1 A2 A3   - Base_link ate wrist_link - Testado e a funcionar so
@@ -75,7 +75,7 @@ if (round(X0_3)<0)
     aux_simplified = -aux_simplified;
 end
 
-teta3 = -(aux_phi_3 - 90 + aux_simplified)*pi/180;
+teta3 = (aux_phi_3 - 90 + aux_simplified)*pi/180;
 
 teta3 = round(teta3*100)/100
 
@@ -129,7 +129,7 @@ TJ1_J2 = homo_matrix_andre(teta1,[0,0,0],"z");
 
 TJ2_J3 = homo_matrix_andre(-teta2,[0,0,0],"y");
 
-TJ3_J4 = homo_matrix_andre(teta3,[0,0,0],"y");
+TJ3_J4 = homo_matrix_andre(-teta3,[0,0,0],"y");
 
 T0_3 = TBase_J1*TJ1_J2*TJ2_J3*TJ3_J4;
 
@@ -205,12 +205,11 @@ R3_6 = R0_3\R_base_tool;
 %Esta aqui algo errado uma vez que R3_6 nao e igual a R3_6_teste
 Teta5 = acos(R3_6(1,1))
 
-%Teta5 = (round(Teta5*10)/10)
+Teta5 = (round(Teta5*10)/10);
 
 if(Teta5>-1e-6 && Teta5<1e-6)
     Teta4 = 0
     Teta6 = acos(R3_6(3,3))
-    
 else
     %%%%%%%% 
     Teta6 = asin(R3_6(1,2)/(sin(Teta5)))
