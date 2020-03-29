@@ -1,7 +1,5 @@
 function [O] = inverseKinematics(A1,A2,A3,A4,A5,A6)
 
-O = [];
-
 %Manipulator Dimensions
 Base = 103;
 Shoulder = 80;
@@ -24,15 +22,12 @@ s3 = sin(A6);
 R_base_tool = [c1*c2*c3-s1*s3, -c3*s1-c1*c2*s3, c1*s2;
                c1*s3+c2*c3*s1, c1*c3-c2*s1*s3, s1*s2;
                -c3*s2, s2*s3, c2];
-% R_base_tool = [c2, s2*s3, c3*s2;
-%                s1*s2, c1*c3-c2*s1*s3, -c1*s3-c2*c3*s1;
-%                -c1*s2, c3*s1+c1*c2*s3, c1*c2*c3-s1*s3];
            
 P_base_tool = [A1;A2;A3];
 
 T_base_tool = [R_base_tool, P_base_tool;
                0, 0, 0, 1];
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Calcular a posicao da joint 5
 P_base_wrist = T_base_tool*[-Wrist 0 Hand 1]';
 P_base_wrist = P_base_wrist(1:3);
@@ -44,12 +39,6 @@ X0_3 = P_base_wrist(1);
 Y0_3 = P_base_wrist(2);
 Z0_3 = P_base_wrist(3);
 
-
-%Propriedades trignometria
-% sin(-x) = - sin(x) Periodo = 2pi
-% cos(-x) = cos(x) Periodo = 2pi
-% tan(-x) = -tan(x) Periodo = pi
-
 teta1 = (atan2d(Y0_3, X0_3))*pi/180;
 
 if(round(X0_3)>=-30 && round(X0_3)<0)
@@ -57,7 +46,7 @@ if(round(X0_3)>=-30 && round(X0_3)<0)
 end
 
 teta1 = round(teta1*100)/100;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 r1 = sqrt((X0_3^2)+(Y0_3^2));
 
 r2 = Z0_3 - (Base+Shoulder);
@@ -75,7 +64,7 @@ aux_phi_3 = acosd(((r3^2)-(d_aux^2)-(Arm^2))/(-2*d_aux*Arm));
 teta2 = -(90 - (aux_phi_1 + aux_phi_2))*pi/180;
 
 teta2 = round(teta2*100)/100;
-%%%%%%%%%%%%%%%%%%%%%%%% Verificar se isto esta certo %%%%%%%%%%%%%%%%%%
+
 aux_simplified = -asind(Elbow1/d_aux);
 if (round(X0_3)<0)
     aux_simplified = -aux_simplified;
@@ -92,9 +81,7 @@ teta3_2 = pi - teta3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 teta1_novo = teta1;
 
-%teta2_novo = 90 - (aux_phi_2 - aux_phi_1)
-%teta2_novo = (180 - (aux_phi_2 + aux_phi_1))*pi/180
-teta2_novo = (90 - (aux_phi_2 - aux_phi_1))*pi/180;
+teta2_novo = -(90 - (aux_phi_2 - aux_phi_1))*pi/180;
 teta2_novo = round(teta2_novo*100)/100;
 
 teta3_novo = ((360 - (aux_phi_3 + 90))+aux_simplified)*pi/180;
@@ -126,28 +113,11 @@ R3_6 = R0_3\R_base_tool;
 %Step 4: Forward Kinematics on the last 3 joints and pull out the rotation
 %part, R3_6
 
-% syms A4 A5 A6
-% 
-% aux_a4 = [1,0,0;
-%           0,cos(A4),-sin(A4);
-%           0,sin(A4),cos(A4)];
-%       
-% aux_a5 = [cos(A5),0,sin(A5);
-%           0, 1, 0;
-%           -sin(A5),0,cos(A5)];
-% 
-% aux_a6 = [1,0,0;
-%           0,cos(A6),-sin(A6);
-%           0,sin(A6),cos(A6)];
-%       
-% Aux = aux_a4*aux_a5*aux_a6
-% 
-% Aux =
+% R3_6 =
 %  
 % [          cos(A5),                           sin(A5)*sin(A6),                             cos(A6)*sin(A5)]
 % [  sin(A4)*sin(A5), cos(A4)*cos(A6) - cos(A5)*sin(A4)*sin(A6), - cos(A4)*sin(A6) - cos(A5)*cos(A6)*sin(A4)]
 % [ -cos(A4)*sin(A5), cos(A6)*sin(A4) + cos(A4)*cos(A5)*sin(A6),   cos(A4)*cos(A5)*cos(A6) - sin(A4)*sin(A6)]
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Step 5: Specify what you want the rotation matrix R0_6 to be
@@ -170,10 +140,10 @@ if(Teta5>-1e-6 && Teta5<1e-6)
     Teta4 = 0;
     Teta6 = acos(R3_6(3,3));
 else 
-    Teta6 = asin(R3_6(1,2)/(sin(Teta5)));
-    %Teta6 = atan2(R3_6(1,2),R3_6(1,3));
-    Teta4 = asin(R3_6(2,1)/(sin(Teta5)));
-    %Teta4 = atan2(R3_6(2,1),-R3_6(3,1));
+    %Teta6 = asin(R3_6(1,2)/(sin(Teta5)));
+    Teta6 = atan2(R3_6(1,2),R3_6(1,3))+pi;
+    %Teta4 = asin(R3_6(2,1)/(sin(Teta5)));
+    Teta4 = atan2(R3_6(2,1),-R3_6(3,1))+pi;
 end
 
 Teta5_2 = -Teta5;
@@ -181,10 +151,10 @@ if(Teta5_2>-1e-6 && Teta5_2<1e-6)
     Teta4_2 = 0;
     Teta6_2 = acos(R3_6(3,3));
 else 
-    Teta6_2 = asin(R3_6(1,2)/(sin(Teta5_2)));
-    %Teta6_2 = atan2(R3_6(1,2),R3_6(1,3));
-    Teta4_2 = asin(R3_6(2,1)/(sin(Teta5_2)));
-    %Teta4_2 = atan2(R3_6(2,1),-R3_6(3,1));
+    %Teta6_2 = asin(R3_6(1,2)/(sin(Teta5_2)));
+    Teta6_2 = atan2(R3_6(1,2),R3_6(1,3));
+    %Teta4_2 = asin(R3_6(2,1)/(sin(Teta5_2)));
+    Teta4_2 = atan2(R3_6(2,1),-R3_6(3,1));
 end
 
 O = [teta1,teta2,teta3,Teta4,Teta5,Teta6;
@@ -198,14 +168,24 @@ O = [teta1,teta2,teta3,Teta4,Teta5,Teta6;
 
 O=unique(O,'rows','stable');
 
+index_saved = [];
 for i = 1:size(O,1)
     if(~isreal(O(i,:)))
-        O(i,:)=[];
+        index_saved = [index_saved i];
     end
 end
 
-Teste_R0_3 = [          cos(Teta5),                           sin(Teta5)*sin(Teta6),                             cos(Teta6)*sin(Teta5)
-                sin(Teta4)*sin(Teta5), cos(Teta4)*cos(Teta6) - cos(Teta5)*sin(Teta4)*sin(Teta6), - cos(Teta4)*sin(Teta6) - cos(Teta5)*cos(Teta6)*sin(Teta4)
-               -cos(Teta4)*sin(Teta5), cos(Teta6)*sin(Teta4) + cos(Teta4)*cos(Teta5)*sin(Teta6),   cos(Teta4)*cos(Teta5)*cos(Teta6) - sin(Teta4)*sin(Teta6)];
+O(index_saved,:)=[];
+
+for linha = 1:size(O,1)
+    for col = 1:6
+        if(O(linha,col)>pi)
+            O(linha,col) = O(linha,col)-(2*pi);
+        end
+        if(O(linha,col)<-pi)
+            O(linha,col) = O(linha,col)+(2*pi);
+        end
+    end
+end
 
 end
