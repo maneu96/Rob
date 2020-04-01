@@ -183,11 +183,8 @@ else
     Teta4_2 = atan2(R3_6(2,1),-R3_6(3,1));
 end
 
-Teta4 = (round(Teta4*100)/100);
-Teta6 = (round(Teta6*100)/100);
 
-Teta4_2 = (round(Teta4_2*100)/100);
-Teta6_2 = (round(Teta6_2*100)/100);
+
 
 O = [teta1,teta2,teta3,Teta4,Teta5,Teta6;
      teta1_2,teta2_2,teta3_2,Teta4,Teta5,Teta6;
