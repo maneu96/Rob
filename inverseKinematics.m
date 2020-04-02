@@ -55,10 +55,6 @@ Z0_3 = P_base_wrist(3);
 
 teta1 = (atan2d(Y0_3, X0_3))*pi/180;
 
-% if(round(X0_3)>=-30 && round(X0_3)<0)
-%     teta1 = teta1-pi;
-% end
-
 teta1 = round(teta1*100)/100;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 r1 = sqrt((X0_3^2)+(Y0_3^2));
@@ -160,26 +156,24 @@ R3_6 = R0_3\R_base_tool;
 Teta5 = acos(R3_6(1,1));
 Teta5 = (round(Teta5*10)/10);
 
+if(~isreal(Teta5))
+    error("No solutions");
+end
+
 if(Teta5>-1e-6 && Teta5<1e-6)
     Teta4 = 0;
-    %Teta6 = acos(R3_6(3,3));
     Teta6 = atan2(R3_6(1,2),R3_6(1,3));
 else 
-    %Teta6 = asin(R3_6(1,2)/(sin(Teta5)));
     Teta6 = atan2(R3_6(1,2),R3_6(1,3))+pi;
-    %Teta4 = asin(R3_6(2,1)/(sin(Teta5)));
     Teta4 = atan2(R3_6(2,1),-R3_6(3,1))+pi;
 end
 
 Teta5_2 = -Teta5;
 if(Teta5_2>-1e-6 && Teta5_2<1e-6)
     Teta4_2 = 0;
-    %Teta6_2 = acos(R3_6(3,3));
     Teta6_2 = atan2(R3_6(1,2),R3_6(1,3));
 else 
-    %Teta6_2 = asin(R3_6(1,2)/(sin(Teta5_2)));
     Teta6_2 = atan2(R3_6(1,2),R3_6(1,3));
-    %Teta4_2 = asin(R3_6(2,1)/(sin(Teta5_2)));
     Teta4_2 = atan2(R3_6(2,1),-R3_6(3,1));
 end
 
