@@ -23,11 +23,14 @@ Table= [0   0   103  A1;
     -pi/2  30   0    A4;
         0  0   221.5  0;
      pi/2  0    0    A5;
-    -pi/2  -5.5  23.7 A6;];
+    -pi/2  -5.5  23.7 A6;
+    0  0    0    pi/2;
+     pi/2  0    0     0;
+    0  0    0    pi/2];
 
 Transf= eye(4);    
-for i=1:size(Table,1)
-    Transf=Transf* T(Table(i,1),Table(i,2),Table(i,3),Table(i,4));
+for i=9:12
+    Transf=Transf* T(Table(i,1),Table(i,2),Table(i,3),Table(i,4))
 end
 %% Euler angles
 R = Transf(1:3,1:3);

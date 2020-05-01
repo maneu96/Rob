@@ -1,4 +1,4 @@
-function [matrix] = homo_matrix(angle,translation,axis)
+function [matrix] = homo_matrix(angle,translation,axis) 
 
 matrix = zeros(3,4);
 angle_deg = angle*180/pi;
