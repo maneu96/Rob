@@ -10,6 +10,28 @@ function [ O ] = direct_kinematics( A1,A2,A3,A4,A5,A6)
 % T_x= @(a) [a;0;0];
 % T_z= @(d) [0;0;d];
 
+%Max angle range
+J1_min = -175*pi/180;
+J1_max = 175*pi/180;
+J2_min = -36.7*pi/180;
+J2_max = 90*pi/180;
+J3_min = -90*pi/180;
+J3_max = 80*pi/180;
+J4_min = -175*pi/180;
+J4_max = 175*pi/180;
+J5_min = -110*pi/180;
+J5_max = 100*pi/180;
+J6_min = -147.5*pi/180;
+J6_max = 147.5*pi/180;
+
+
+if(A1<J1_min || A1>J1_max || A2<J2_min || A2>J2_max || A3<J3_min || A3>J3_max || A4<J4_min || A4>J4_max ||...
+        A5<J5_min || A5>J5_max || A6<J6_min || A6>J6_max)
+    error("Angles not valid");
+end
+
+
+
 T= @(alpha,a,d,theta) [cos(theta)              -sin(theta)              0           a;
                        sin(theta)*cos(alpha)   cos(theta)*cos(alpha)    -sin(alpha) -sin(alpha)*d;
                        sin(theta)*sin(alpha)   cos(theta)*sin(alpha)    cos(alpha)  cos(alpha)*d;
@@ -23,10 +45,17 @@ Table= [0   0   103  A1;
     -pi/2  30   0    A4;
         0  0   221.5  0;
      pi/2  0    0    A5;
+<<<<<<< HEAD:Lab1/direct_kinematics.m
     -pi/2  -5.5  23.7 A6;
     0  0    0    pi/2;
      pi/2  0    0     0;
     0  0    0    pi/2];
+=======
+    -pi/2  -5.5  23.7 A6
+        0  0    0    pi/2;
+     pi/2  0    0     0;
+        0  0    0    pi/2];
+>>>>>>> ce752b4a9ff33b1840635a3259c9898a220b2ec5:direct_kinematics.m
 
 Transf= eye(4);    
 for i=9:12
