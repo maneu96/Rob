@@ -1,0 +1,19 @@
+function [alpha,v] = controlador(position_rob,theta_rob,position_path, theta_path, alpha_rob)
+%CONTROLADOR Summary of this function goes here
+%   Detailed explanation goes here
+
+error_vec = [position_path-position_rob; theta_path-theta_rob];
+
+b_error = [cos(theta_rob), sin(theta_rob), 0; -sin(theta_rob), cos(theta_rob), 0; 0, 0, 1]*error_vec;
+
+K_v = 0.0;
+K_s = 1;
+K_i = 1;
+
+v = K_v*b_error(1);
+alpha_dot = K_s*b_error(2)+K_i*b_error(3);
+
+alpha = alpha_rob + alpha_dot;
+
+end
+

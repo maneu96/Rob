@@ -1,0 +1,29 @@
+X=[0;0];
+theta=0;
+alpha=0;
+figure;
+x_path = [0:10;zeros(1,11)];
+theta_path = 0;
+K=1;
+for i= 2:10000
+    %t=(i-1)/1000;
+    %plot(X(1),X(2));
+    %hold on;
+%     if i==5000
+%         alpha=pi/2-0.1;
+%     end
+%     if theta>=pi/2
+%         alpha=0;
+%     end
+    if abs()
+        K=K
+    end
+
+    [alpha,v] = controlador(X(:,i-1),theta, x_path(), theta_path, alpha);
+
+    [X(:,i),theta]=robot(X(:,i-1),theta,alpha,1,0.001);
+end
+
+plot(X(1,:),X(2,:));
+xlim([-10 10]);
+ylim([-10 10]);

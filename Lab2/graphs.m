@@ -33,7 +33,7 @@ load x, y;
 load nodes_coord
 N = length(nodes_coord);
 G = digraph;
-G = addnode( G, string(1:N))
+G = addnode( G, cellstr(string(1:N)))
 G.Nodes.X= x';
 G.Nodes.Y= y';
 
@@ -98,6 +98,7 @@ hold on;
 plot( G.Nodes.X,  G.Nodes.Y, 'or');
 plot(xx, yy, 'k--');
 plot(xx_, yy_, 'b-');
+
 
 % %%%%%% Pixel to Meters scale
 % x_scale = 0.18107;
