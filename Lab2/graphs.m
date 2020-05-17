@@ -29,6 +29,8 @@
 % %save nodes_coord;
 
 %%
+clear all
+close all
 load x, y;
 load nodes_coord
 N = length(nodes_coord);
@@ -61,11 +63,18 @@ plot(G, 'Xdata', G.Nodes.X, 'YData', G.Nodes.Y)
 
 [p ,d] = shortestpath(G, 19, 29)
 i=1; step=1;
-xq=[]; vq=[];
+xq=[G.Nodes.X(p(1))]; vq=[G.Nodes.Y(p(1))];
 for i=1:length(p)-1
-    step = (max([G.Nodes.X(p(i)), G.Nodes.X(p(i+1))]) - min([G.Nodes.X(p(i)), G.Nodes.X(p(i+1))]))/3;
-    xqi = min([G.Nodes.X(p(i)), G.Nodes.X(p(i+1))]):step:max([G.Nodes.X(p(i)), G.Nodes.X(p(i+1))]);
-    vqi = interp1( [G.Nodes.X(p(i)), G.Nodes.X(p(i+1))], [G.Nodes.Y(p(i)), G.Nodes.Y(p(i+1))], xqi);
+    %step = (max([G.Nodes.X(p(i)), G.Nodes.X(p(i+1))]) - min([G.Nodes.X(p(i)), G.Nodes.X(p(i+1))]))/3;
+    step =5* cos(atan( (G.Nodes.Y(p(i+1))-G.Nodes.Y(p(i)))/(G.Nodes.X(p(i+1))-G.Nodes.X(p(i))) ));
+    xqi = min([G.Nodes.X(p(i+1)), G.Nodes.X(p(i))]):step:max([G.Nodes.X(p(i+1)), G.Nodes.X(p(i))]);
+    vqi = interp1( [G.Nodes.X(p(i+1)), G.Nodes.X(p(i))], [G.Nodes.Y(p(i+1)), G.Nodes.Y(p(i))], xqi);
+    
+    if G.Nodes.X(p(i+1))-G.Nodes.X(p(i))<0
+        xqi = flip(xqi);
+        vqi = flip(vqi);
+    end
+    
     xq= [xq xqi];
     vq = [vq vqi];
 end
@@ -75,14 +84,16 @@ hold on;
 plot( G.Nodes.X,  G.Nodes.Y, 'or');
 plot(xq, vq, '.k');
 
-h = 0.01;
-npt = length(p);        % number of via points, including initial and final
-nvia = [0:1:npt-1];
-csinterp_x = csapi(nvia,G.Nodes.X(p));
-csinterp_y = csapi(nvia,G.Nodes.Y(p));
-time = [0:h:npt-1];
-xx = fnval(csinterp_x, time);
-yy = fnval(csinterp_y, time);
+ h = 0.01;
+% npt = length(p);        % number of via points, including initial and final
+% nvia = [0:1:npt-1];
+% csinterp_x = csapi(nvia,G.Nodes.X(p));
+% csinterp_y = csapi(nvia,G.Nodes.Y(p));
+% time = [0:h:npt-1];
+% xx = fnval(csinterp_x, time);
+% yy = fnval(csinterp_y, time);
+
+
 
 npt = length(xq);        % number of via points, including initial and final
 nvia = [0:1:npt-1];
@@ -96,10 +107,81 @@ figure();
 imshow(imread('ist_map_detail.png'))
 hold on;
 plot( G.Nodes.X,  G.Nodes.Y, 'or');
-plot(xx, yy, 'k--');
+%plot(xx, yy, 'k--');
 plot(xx_, yy_, 'b-');
 
 
+%%
+ p_inicial = [700;900];
+%node_dist = vecnorm( [(G.Nodes.X-p_inicial(1))' ;(G.Nodes.Y-p_inicial(2))']);
+%[~,node_idx]= min(node_dist);
+
+% IDENTIFICA A EDGE MAIS PERTO DO PONTO INICIAL
+for k = 1:size(G.Edges,1)
+    i = str2double(cell2mat(G.Edges.EndNodes(k,1))); %start node
+    j = str2double(cell2mat(G.Edges.EndNodes(k,2))); %end node
+    
+    step =5* cos(atan( (G.Nodes.Y(i)-G.Nodes.Y(j))/(G.Nodes.X(i)-G.Nodes.X(j)) ));
+    xqi = min([G.Nodes.X(i), G.Nodes.X(j)]):step:max([G.Nodes.X(i), G.Nodes.X(j)]);
+    vqi = interp1( [G.Nodes.X(i)-1, G.Nodes.X(j)], [G.Nodes.Y(i), G.Nodes.Y(j)], xqi);
+    
+    node_dist = vecnorm( [(xqi-p_inicial(1)) ;(vqi-p_inicial(2))]);
+    node_val(k)= min(node_dist); % valor minimo a uma edge do par (k) 
+end
+[~, edge_idx] = min(node_val)
+
+% IDENTIFICA PARA QUAL NODE DEVE "APONTAR"
+[~,d1] = shortestpath(G, G.Edges.EndNodes(edge_idx, 1), 29)
+[~,d2] = shortestpath(G, G.Edges.EndNodes(edge_idx, 2), 29)
+if d1 < d2
+   next_node_id =  G.Edges.EndNodes(edge_idx, 1);
+else
+    next_node_id =  G.Edges.EndNodes(edge_idx, 2);
+end
+
+i =  str2double(cell2mat(G.Edges.EndNodes(edge_idx, 1)));
+j =  str2double(cell2mat(G.Edges.EndNodes(edge_idx, 2)));
+
+% IDENTIFICAR O PONTO DO PATH + PERTO DO PONTO INICIAL
+step =5* cos(atan( (G.Nodes.Y(i)-G.Nodes.Y(j))/(G.Nodes.X(i)-G.Nodes.X(j)) ));
+xq_int = min([G.Nodes.X(i), G.Nodes.X(j)]):step:max([G.Nodes.X(i), G.Nodes.X(j)]);
+vq_int = interp1( [G.Nodes.X(i)-1, G.Nodes.X(j)], [G.Nodes.Y(i), G.Nodes.Y(j)], xq_int);
+
+node_dist = vecnorm( [(xq_int-p_inicial(1)) ;(vq_int-p_inicial(2))]);
+[~, next_point_idx]= min(node_dist); 
+next_point = [xq_int(next_point_idx) ; vq_int(next_point_idx)]
+
+aux1 = [xq_int(next_point_idx-1) ; vq_int(next_point_idx-1)] 
+aux2 = [xq_int(next_point_idx+1) ; vq_int(next_point_idx+1)] 
+
+aux1 = aux1 - [G.Nodes.X(j) - G.Nodes.Y(j)];
+aux2 = aux2 - [G.Nodes.X(j) - G.Nodes.Y(j)];
+
+xqi=[];
+vqi=[];
+if norm(aux1) < norm(aux2)
+    if next_point(1) < G.Nodes.X(i)
+        xqi = [xqi xq_int(1:next_point_idx)];
+        vqi = [vqi vq_int(1:next_point_idx)];
+    else
+        xqi = flip([xqi xq_int(1:next_point_idx)]);
+        vqi = flip([vqi vq_int(1:next_point_idx)]);
+    end
+else
+    if next_point(1) < G.Nodes.X(i)
+        xqi = [xqi xq_int(next_point_idx:end)];
+        vqi = [vqi vq_int(next_point_idx:end)];
+    else
+        xqi = flip([xqi xq_int(next_point_idx:end)]);
+        vqi = flip([vqi vq_int(next_point_idx:end)]);
+    end
+end
+
+% step =5* cos(atan( (G.Nodes.Y(p(i+1))-G.Nodes.Y(p(i)))/(G.Nodes.X(p(i+1))-G.Nodes.X(p(i))) ));
+%     xqi = min([G.Nodes.X(p(i+1)), G.Nodes.X(p(i))]):step:max([G.Nodes.X(p(i+1)), G.Nodes.X(p(i))]);
+%     vqi = interp1( [G.Nodes.X(p(i+1)), G.Nodes.X(p(i))], [G.Nodes.Y(p(i+1)), G.Nodes.Y(p(i))], xqi);
+
+ 
 % %%%%%% Pixel to Meters scale
 % x_scale = 0.18107;
 % disp(['xx scale factor ', num2str(x_scale), ' meters/pixel']);

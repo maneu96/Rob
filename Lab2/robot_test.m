@@ -17,8 +17,8 @@ error_save=[];
 b_error_save=[];
 theta_path=[];
 for i=2:length(x_path)
-    vector_dif = x_path(:,i-1)-x_path(:,i);
-    theta_path=[theta_path, atan2(vector_dif(2),vector_dif(1))];
+    vector_dif = x_path(:,i)-x_path(:,i-1);
+    theta_path=[theta_path, atan2(vector_dif(2), vector_dif(1))];
 end
 
 i=2;
@@ -60,6 +60,7 @@ while K<=length(x_path)
 end
 
 figure;
+imshow(imread('ist_map_detail.png')); hold on
 scatter(x_path(1,:),x_path(2,:));
 hold on;
 plot(X(1,:),X(2,:));
