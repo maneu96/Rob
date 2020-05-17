@@ -14,7 +14,7 @@ i=1; step=1;
 xq=[G.Nodes.X(p(1))]; vq=[G.Nodes.Y(p(1))];
 for i=1:length(p)-1
     %step = (max([G.Nodes.X(p(i)), G.Nodes.X(p(i+1))]) - min([G.Nodes.X(p(i)), G.Nodes.X(p(i+1))]))/3;
-    step =5* cos(atan( (G.Nodes.Y(p(i+1))-G.Nodes.Y(p(i)))/(G.Nodes.X(p(i+1))-G.Nodes.X(p(i))) ));
+    step =8* cos(atan( (G.Nodes.Y(p(i+1))-G.Nodes.Y(p(i)))/(G.Nodes.X(p(i+1))-G.Nodes.X(p(i))) ));
     xqi = min([G.Nodes.X(p(i+1)), G.Nodes.X(p(i))]):step:max([G.Nodes.X(p(i+1)), G.Nodes.X(p(i))]);
     vqi = interp1( [G.Nodes.X(p(i+1)), G.Nodes.X(p(i))], [G.Nodes.Y(p(i+1)), G.Nodes.Y(p(i))], xqi);
     

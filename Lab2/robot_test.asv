@@ -28,13 +28,13 @@ end
 phi_save = [theta_path(1)];
 
 i=2;
-theta_path = [theta_path(1) theta_path theta_path(end)];
+theta_path = [theta_path, theta_path(end)];
 
 X=[x_path(1,1);x_path(2,1)];
 theta=theta_path(1);
 
 M = 810; %[Kg]
-delta_t =0.1;
+delta_t =0.05;
 P0 = 0; v=0;v_phi=0;
 while 1%K<=length(x_path)
 
@@ -45,9 +45,7 @@ while 1%K<=length(x_path)
         
         
         if K==length(x_path) 
-            if norm(X(:,i-1)-x_path(:,end))<=2
-                break
-            end
+
         else
             K=K+1
         end

@@ -23,7 +23,7 @@ V_TRESH = v_thresh * delta_t;
 v = K_v*b_error(1);
 
 W_TRESH = 0.5; % rads/s
-
+accel = (v - last_v) / delta_t;
 
 W_accel_TRESH = W_TRESH / 0.1; % [demora 0,5 sec até Wmax]
 W_accel_TRESH = 0.12;
@@ -31,9 +31,8 @@ W_accel_TRESH = 0.12;
 alpha_dot = K_s*b_error(3)+K_i*b_error(2);
 alpha = alpha_rob + alpha_dot;
 
-[alpha, v] = non_linear_block(alpha,v);
-alpha_dot = (alpha- last_v_phi)/delta_t;
-accel = (v - last_v) / delta_t;
+[alpha, v_nl] = non_linear_block(phi,v)
+
 % LIMITE DE ACELERAÇÃO 
 if abs(accel) > ACCEL_TRESH
     v = ACCEL_TRESH * delta_t + last_v;
