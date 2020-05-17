@@ -4,10 +4,15 @@ clear all;
 %X=[0;0];
 %theta=pi/4;
 phi=0;
-x_path = [0:10;0,1,2,3,4,5,4,5,4,5,4];
-x_path = [0:10;5*sin(0:0.5:5)];
-load x_path
-
+% x_path = [0:10;0,1,2,3,4,5,4,5,4,5,4];
+% x_path = [0:10;5*sin(0:0.5:5)];
+% load x_path
+load G
+p_inicial = [700;900]; %USER INPUT %%%%%%%%%
+p_inicial = [340;900]; %USER INPUT %%%%%%%%%
+p_final = [760; 1560]; %USER INPUT %%%%%%%%%
+[xq, vq] = get_path(p_inicial, p_final, G); %Gets all reference points in the path
+x_path = [xq; vq];
 
 K=1;
 phi_save = [];
