@@ -1,75 +1,81 @@
 close all;
 clear all;
 
-%X=[0;0];
-%theta=pi/4;
-phi=0;
-% x_path = [0:10;0,1,2,3,4,5,4,5,4,5,4];
-% x_path = [0:10;5*sin(0:0.5:5)];
-% load x_path
-load G
 p_inicial = [700;900]; %USER INPUT %%%%%%%%%
 p_inicial = [340;900]; %USER INPUT %%%%%%%%%
 p_final = [760; 1560]; %USER INPUT %%%%%%%%%
+X= p_inicial; % COORDENADAS DO CARRO
+
+%DEFINES
+STOP_SIGN_WAITING_TIME = 1; %[s]
+M = 810; %[Kg]
+
+load G
+
+%VARS
+phi=0;
+v_save=[0];
+phi_save = 0;
+%stop_signs = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
+stop_signs = [];
+
+speed_limit_pos = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
+speed_limit_vel = [20 10 15];
+stop_signs = [speed_limit_pos; speed_limit_vel]
+
+% CODE %%%
 [xq, vq] = get_path(p_inicial, p_final, G); %Gets all reference points in the path
 x_path = [xq; vq];
 
-K=1;
+paths=stop_sign_handler(stop_signs, x_path, G);
 
-v_save=[0];
-theta_save=[];
-error_save=[];
-b_error_save=[];
-theta_path=[];
-for i=2:length(x_path)
-    vector_dif = x_path(:,i)-x_path(:,i-1);
-    theta_path=[theta_path, atan2(vector_dif(2), vector_dif(1))];
-end
-phi_save = [theta_path(1)];
-
-i=2;
-theta_path = [theta_path, theta_path(end)];
-
-X=[x_path(1,1);x_path(2,1)];
+% INIT 1º CICLO
+x_path = cell2mat(paths(1)); %% 1º SUB PATH
+[theta_path] = get_theta_path(cell2mat(paths(1)));
 theta=theta_path(1);
 
-M = 810; %[Kg]
-delta_t =0.05;
-P0 = 0; v=0;v_phi=0;
+P0 = 1; v=0;v_phi=0;wait_count=0;path_counter=1;
+i=2;K=1;delta_t =0.1;
 while 1%K<=length(x_path)
 
-
-     if (norm(X(:,i-1)-x_path(:,K))<8) %||...
-%             ((abs(error_save(1,end))<=0.1) && (abs(theta)<=0.1||(abs(theta)<=pi+0.1 && abs(theta)>=pi-0.1))) ||...
-%             ((abs(error_save(2,end))<=0.1) && (abs(theta)<=pi/2+0.1 || abs(theta)>=pi/2-0.1))
-        
-        
-        if K==length(x_path) 
-
+     if (norm(X(:,i-1)-x_path(:,K))<8) % DISTANCIA À REF 'k'
+        if K==length(x_path) %ULTIMA REF DO SUBPATH 
+            if v/delta_t< 0.25% VELOCIDADE +-=0
+                if length(paths)== path_counter %CHEGA AO DESTINO DO ULTIMO SUBPATH
+                    break
+                else %WAITS 
+                    wait_count = wait_count+1;
+                    if wait_count >= STOP_SIGN_WAITING_TIME/delta_t %SELECIONA NOVO SUBPATH
+                        path_counter = path_counter+1;
+                        x_path = cell2mat(paths(path_counter));
+                        [theta_path] = get_theta_path(x_path);
+                        wait_count=0; K=1;
+                    end
+                end            
+            end
         else
             K=K+1
         end
-        %figure();
-        %scatter(x_path(1,:),x_path(2,:));
-        %hold on;
-        %plot(X(1,:),X(2,:));
      end
-
-    [phi,v,error_vec,b_error] = controlador(X(:,i-1),theta, x_path(:,K), theta_path(K+1), phi, v,v_phi, delta_t);
+     
+    %CONTROLO
+    [phi,v] = controlador(X(:,i-1),theta, x_path(:,K), theta_path(K+1), phi, v,v_phi, delta_t);
+    %MODELO DO CARRO
+    [X(:,i),theta]=robot(X(:,i-1),theta,phi,v, delta_t);
     
-    theta_save=[theta_save,theta];
+    %DEBUG
     phi_save = [phi_save, phi];
     v_save = [v_save , v];
     a_save(i) = (v - v_save(end-1)) / delta_t;
     v_phi = phi-phi_save(end-1);
     
-    %energy_spent(i) = (M*a_save(i) + P0)* v * delta_t;
-    
-    error_save=[error_save, error_vec];
-    b_error_save = [b_error_save, b_error];
-    [X(:,i),theta]=robot(X(:,i-1),theta,phi,v, delta_t);
+    if a_save(i) <0 %ENERGIA
+        energy_spent(i) = (P0)* abs(v) * delta_t;
+    else
+        energy_spent(i) = (M*a_save(i) + P0)* abs(v) * delta_t;
+    end
+   
     i=i+1;
-
 end
 
 figure;
@@ -78,26 +84,7 @@ scatter(x_path(1,:),x_path(2,:));
 hold on;
 plot(X(1,:),X(2,:));
 
-figure();
-plot(theta_save)
-
-figure();
-plot(phi_save);
-
-figure();
-plot(v_save);
-
-figure();
-plot(error_save(1,:));
-
-figure();
-plot(error_save(2,:));
-
-figure();
-plot(b_error_save(1,:));
-
-%%
-
+figure()
 plot( (1:length(a_save))*delta_t, a_save/delta_t);
 hold on
 plot( (1:length(a_save))*delta_t, v_save/delta_t);

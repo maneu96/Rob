@@ -1,4 +1,4 @@
-function [alpha,v,error_vec,b_error] = controlador(position_rob,theta_rob,position_path, theta_path, alpha_rob, last_v, last_v_phi, delta_t)
+function [alpha,v] = controlador(position_rob,theta_rob,position_path, theta_path, alpha_rob, last_v, last_v_phi, delta_t)
 %CONTROLADOR Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -25,7 +25,7 @@ v = K_v*b_error(1);
 W_TRESH = 0.5; % rads/s
 
 
-W_accel_TRESH = W_TRESH / 0.1; % [demora 0,5 sec até Wmax]
+W_accel_TRESH = W_TRESH / 0.1; % [demora 0,1 sec até Wmax]
 W_accel_TRESH = 0.12;
 
 alpha_dot = K_s*b_error(3)+K_i*b_error(2);
