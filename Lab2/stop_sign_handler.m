@@ -1,17 +1,16 @@
-function [paths] = stop_sign_handler(stop_signs, x_path, G)
+function [paths] = stop_sign_handler(stop_signs, x_path)
 closest_point=[];
 if isempty(stop_signs)
     paths = {x_path};
     return 
 end
 for i = 1 : length(stop_signs)
-    [edge_idx] = closest_edge(stop_signs(:,i),G);
-    [aux] = check_valid_stop_sign(stop_signs(:,i), edge_idx, G, x_path);
+    [aux] = check_valid_traffic_sign(stop_signs(:,i), x_path);
     if ~isempty(aux)
         closest_point=[closest_point aux];
     end
-    
 end
+
 paths = {};
 paths_idx = {};
 idx =1;

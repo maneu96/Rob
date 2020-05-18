@@ -17,18 +17,18 @@ phi=0;
 v_save=[0];
 phi_save = 0;
 
-%stop_signs = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
-stop_signs = [];
+stop_signs = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
+%stop_signs = [];
 
 speed_limit_pos = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
-speed_limit_vel = [20 10 15];
-speed_limit = [speed_limit_pos; speed_limit_vel];
+speed_limit_vel = [5.5 2.77 6.5];
+speed_limit_signs = [speed_limit_pos; speed_limit_vel];
 
 % CODE %%%
 [xq, vq] = get_path(p_inicial, p_final, G); %Gets all reference points in the path
 x_path = [xq; vq];
 
-paths=stop_sign_handler(stop_signs, x_path, G);
+paths=stop_sign_handler(stop_signs, x_path);
 
 % INIT 1º CICLO
 x_path = cell2mat(paths(1)); %% 1º SUB PATH
@@ -36,7 +36,9 @@ x_path = cell2mat(paths(1)); %% 1º SUB PATH
 theta=theta_path(1);
 
 P0 = 1; v=0;v_phi=0;wait_count=0;path_counter=1;
-i=2;K=1;delta_t =0.1;
+i=2;K=1;delta_t =0.1; 
+prev_speed_limit=0;
+speed_limit=7; % [m/s] = 25,2 [km/h]
 while 1%K<=length(x_path)
 
      if (norm(X(:,i-1)-x_path(:,K))<8) % DISTANCIA À REF 'k'
@@ -55,12 +57,17 @@ while 1%K<=length(x_path)
                 end            
             end
         else
+            
+            speed_limit_aux = speed_limit_handler(speed_limit_signs, X(:,end), x_path, speed_limit);
+            if speed_limit_aux ~= speed_limit
+                prev_speed_limit = speed_limit;
+                speed_limit = speed_limit_aux;
+            end
             K=K+1
         end
      end
-     
     %CONTROLO
-    [phi,v] = controlador(X(:,i-1),theta, x_path(:,K), theta_path(K+1), phi, v,v_phi, delta_t);
+    [phi,v] = controlador(X(:,i-1),theta, x_path(:,K), theta_path(K+1), phi, v,v_phi, delta_t, speed_limit, prev_speed_limit);
     %MODELO DO CARRO
     [X(:,i),theta]=robot(X(:,i-1),theta,phi,v, delta_t);
     

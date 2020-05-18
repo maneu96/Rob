@@ -1,4 +1,4 @@
-function [alpha,v] = controlador(position_rob,theta_rob,position_path, theta_path, alpha_rob, last_v, last_v_phi, delta_t, v_thresh, prev_v_thresh)
+function [alpha,v] = controlador(position_rob,theta_rob,position_path, theta_path, alpha_rob, last_v, last_v_phi, delta_t, v_thresh, prev_v_tresh)
 %CONTROLADOR Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -47,21 +47,9 @@ end
 %if v> V_TRESH
 %    v = V_TRESH;
 %end
-if prev_v_thresh > v_thresh && v>V_TRESH
-    v = -ACCEL_TRESH * delta_t + last_v;
-    if v< V_TRESH
-        v=V_TRESH;
-    end
-end
-
-if prev_v_thresh < v_thresh && v > last_v
-    v = ACCEL_TRESH * delta_t + last_v;
-    if v> V_TRESH
-        v= V_TRESH;
-    end        
-end
 
 alpha_accel = (alpha_dot - last_v_phi)/delta_t; % Aceleração angular
+
 % LIMITE DE ACELERAÇÃO ANGULAR
 if abs(alpha_accel) > W_accel_TRESH
      alpha_dot = W_accel_TRESH * delta_t +  last_v_phi;

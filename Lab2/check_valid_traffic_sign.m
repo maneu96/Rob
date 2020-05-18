@@ -1,9 +1,6 @@
-function [closest_point] = check_valid_stop_sign(point, edge, G, x_path)
+function [closest_point] = check_valid_traffic_sign(point, x_path)
 %@para point - point coordenates
 STOP_SIGN_TRESH = 70; %[pixel]
-
-i =  str2double(cell2mat(G.Edges.EndNodes(edge, 1)));
-j =  str2double(cell2mat(G.Edges.EndNodes(edge, 2)));
 
 % IDENTIFICAR O PONTO DO PATH + PERTO DO PONTO INICIAL
 xq_int = x_path(1,:);
