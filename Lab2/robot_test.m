@@ -20,9 +20,13 @@ phi_save = 0;
 stop_signs = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
 %stop_signs = [];
 
-speed_limit_pos = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
-speed_limit_vel = [5.5 2.77 6.5];
+speed_limit_pos = [360 1360 624;1120 1000 1200] ; %SPEED LIMIT SIGNS POSITIONS
+speed_limit_vel = [5.5 2.77 6.5]; % [m/s]
 speed_limit_signs = [speed_limit_pos; speed_limit_vel];
+%speed_limit_signs=[];
+
+pedestrian_crossing_signs = [360 1360 624;1120 1000 1200] ; % PEDESTRIAN CROSSING SIGNS POSITIONS
+pedestrian_crossing_times = [45 10 14; 20 5 4 ]; % [INICIO DA PASSAGEM; DURAÇÃO]
 
 % CODE %%%
 [xq, vq] = get_path(p_inicial, p_final, G); %Gets all reference points in the path
@@ -38,7 +42,7 @@ theta=theta_path(1);
 P0 = 1; v=0;v_phi=0;wait_count=0;path_counter=1;
 i=2;K=1;delta_t =0.1; 
 prev_speed_limit=0;
-speed_limit=7; % [m/s] = 25,2 [km/h]
+speed_limit=10; % [m/s] = 25,2 [km/h]
 while 1%K<=length(x_path)
 
      if (norm(X(:,i-1)-x_path(:,K))<8) % DISTANCIA À REF 'k'

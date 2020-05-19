@@ -46,6 +46,5 @@ if SIGNAL_DISTANCE_VISIBILITY>dist_int
 else
     speed_limit=current_speed_limit;
 end
-speed_limit
 end
 

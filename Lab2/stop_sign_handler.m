@@ -23,6 +23,5 @@ for i = 2:length(closest_point)+1
 end
 paths(length(closest_point)+1) = {x_path(:, idx(end):end)};
 
-
 end
 

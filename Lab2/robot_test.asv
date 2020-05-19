@@ -17,12 +17,16 @@ phi=0;
 v_save=[0];
 phi_save = 0;
 
-stop_signs = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
+%stop_signs = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
 stop_signs = [];
 
-speed_limit_pos = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
+speed_limit_pos = [360 1360 624;1120 1000 1200] ; %SPEED LIMIT SIGNS POSITIONS
 speed_limit_vel = [5.5 2.77 6.5];
 speed_limit_signs = [speed_limit_pos; speed_limit_vel];
+
+
+pedestrian_crossing_signs = [360 1360 624;1120 1000 1200] ; % PEDESTRIAN CROSSING SIGNS POSITIONS
+stop_signs_times = []
 
 % CODE %%%
 [xq, vq] = get_path(p_inicial, p_final, G); %Gets all reference points in the path
