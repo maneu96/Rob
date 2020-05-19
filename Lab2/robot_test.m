@@ -17,16 +17,21 @@ phi=0;
 v_save=[0];
 phi_save = 0;
 
-stop_signs = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
-%stop_signs = [];
+%stop_signs = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
+stop_signs = [];
+stop_signs = [730; 1495];
 
 speed_limit_pos = [360 1360 624;1120 1000 1200] ; %SPEED LIMIT SIGNS POSITIONS
 speed_limit_vel = [5.5 2.77 6.5]; % [m/s]
 speed_limit_signs = [speed_limit_pos; speed_limit_vel];
 %speed_limit_signs=[];
+speed_limit_signs = speed_limit_signs(:,1);
 
-pedestrian_crossing_signs = [360 1360 624;1120 1000 1200] ; % PEDESTRIAN CROSSING SIGNS POSITIONS
-pedestrian_crossing_times = [45 10 14; 20 5 4 ]; % [INICIO DA PASSAGEM; DURAÇÃO]
+%pedestrian_crossing_signs = [360 1360 624;1120 1000 1200] ; % PEDESTRIAN CROSSING SIGNS POSITIONS
+%pedestrian_crossing_times = [45 10 14; 10 5 4 ]; % [INICIO DA PASSAGEM; DURAÇÃO]
+
+pedestrian_crossing_signs = [360 1360 624;1120 1000 1200];
+pedestrian_crossing_signs=pedestrian_crossing_signs(:,3);
 
 % CODE %%%
 [xq, vq] = get_path(p_inicial, p_final, G); %Gets all reference points in the path
@@ -63,9 +68,11 @@ while 1%K<=length(x_path)
         else
             
             speed_limit_aux = speed_limit_handler(speed_limit_signs, X(:,end), x_path, speed_limit);
-            if speed_limit_aux ~= speed_limit
+            speed_limit_ts = pedestrian_traffic_sign_handler(pedestrian_crossing_signs,X(:,end), x_path, speed_limit_aux, prev_speed_limit);
+            
+            if speed_limit_ts ~= speed_limit
                 prev_speed_limit = speed_limit;
-                speed_limit = speed_limit_aux;
+                speed_limit = speed_limit_ts;
             end
             K=K+1
         end

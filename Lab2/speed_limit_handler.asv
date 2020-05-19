@@ -17,8 +17,7 @@ for i = 1 : size(speed_limit_signs,2)
 end
 
 if isempty(closest_point)
-    speed_limit = current_speed_limit;
-    return
+    speed_limit = current_speed_limit
 end
 
 [~, X_idx]=min( vecnorm(x_path - X));

@@ -1,25 +1,17 @@
-function [speed_limit] = speed_limit_handler(speed_limit_signs, X, x_path, current_speed_limit)
-
-SIGNAL_DISTANCE_VISIBILITY = 40; %[PIXEL]
-
+function [] = pedestrian_crossing_handler(pedestrian_crossing_signs,pedestrian_crossing_times, X, x_path, i, delta_t)
 closest_point=[];
-if isempty(speed_limit_signs)
-    speed_limit = current_speed_limit;
+if isempty(pedestrian_crossing_signs)
+    %????????
     return 
 end
-
-for i = 1 : size(speed_limit_signs,2)
-    [aux] = check_valid_traffic_sign(speed_limit_signs(1:2,i), x_path);
-
+for i = 1 : length(pedestrian_crossing_signs)
+    [aux] = check_valid_traffic_sign(pedestrian_crossing_signs(:,i), x_path);
     if ~isempty(aux)
-        closest_point=[closest_point [aux;speed_limit_signs(3,i)]];
+        closest_point=[closest_point aux];
     end
-end
+end    
 
-if isempty(closest_point)
-    speed_limit = current_speed_limit;
-    return
-end
+%%% ADAPTAR ULTIMA PARTE DO COD. PARA PEDESTRIAN
 
 [~, X_idx]=min( vecnorm(x_path - X));
 for i =1:size(closest_point,2)
@@ -50,5 +42,8 @@ if SIGNAL_DISTANCE_VISIBILITY>dist_int
 else
     speed_limit=current_speed_limit;
 end
+    
+    
+
 end
 
