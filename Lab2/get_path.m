@@ -4,7 +4,8 @@ function [xq, vq] = get_path(p_inicial, p_final, G)
 [edge_ip] = closest_edge(p_inicial,G); % Closest edge to initial point
 [edge_fp] = closest_edge(p_final,G); % Closest edge to final point
 
-[path_nodes] = find_shortestpath(p_inicial,p_final, edge_ip, edge_fp , G); %Initial and final nodes
+%% ENCONTRAR O ERRO(!?)
+[path_nodes] = find_shortestpath(p_inicial, p_final, edge_ip, edge_fp , G); %Initial and final nodes
 
 [xqi_i, vqi_i] = points_to_node(p_inicial, edge_ip, G ,0); % Initial point 2 initial node (interpolation)
 [xqi_f, vqi_f] = points_to_node(p_final, edge_fp, G, 1); % Final node 2 final point (interpolation)

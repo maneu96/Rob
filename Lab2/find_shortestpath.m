@@ -2,8 +2,25 @@ function [path_nodes] = find_shortestpath(initial_point,final_point, edge_ip, ed
 %UNTITLED2 Summary of this function goes here
 c=1;
 node_pairs=[];
-for i =1:2
-    for j=1:2
+edge_ip
+aux_pair = flip([str2double(cell2mat(G.Edges.EndNodes(edge_ip,1))) str2double(cell2mat(G.Edges.EndNodes(edge_ip,2)))]);
+edge_pair = findedge(G,aux_pair(1), aux_pair(2) );
+if edge_pair ==0
+    I_SIZE = 2;
+else
+    I_SIZE = 1;
+end
+
+aux_pair = flip([str2double(cell2mat(G.Edges.EndNodes(edge_fp,1))) str2double(cell2mat(G.Edges.EndNodes(edge_fp,2)))]);
+edge_pair = findedge(G,aux_pair(1), aux_pair(2) );
+if edge_pair ==0
+    J_SIZE = 1;
+else
+    J_SIZE = 2;
+end
+
+for i =I_SIZE:2
+    for j=1:J_SIZE
         [~,d1] = shortestpath(G, G.Edges.EndNodes(edge_ip, i), G.Edges.EndNodes(edge_fp, j));
         node_idx = G.Edges.EndNodes(edge_ip, i);
         node_coord = [G.Nodes.X(str2double(cell2mat(node_idx))); G.Nodes.Y(str2double(cell2mat(node_idx)))];

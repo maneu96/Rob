@@ -1,9 +1,9 @@
 close all;
 clear all;
 
-p_inicial = [700;900]; %USER INPUT %%%%%%%%%
-p_inicial = [340;900]; %USER INPUT %%%%%%%%%
-p_final = [760; 1560]; %USER INPUT %%%%%%%%%
+p_inicial = [339;1330]; %USER INPUT %%%%%%%%%
+%p_inicial = [310;260]; %USER INPUT %%%%%%%%%
+p_final = [385;537]; %USER INPUT %%%%%%%%%
 X= p_inicial; % COORDENADAS DO CARRO
 
 %DEFINES
@@ -18,20 +18,31 @@ v_save=[0];
 phi_save = 0;
 
 %stop_signs = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
-stop_signs = [];
-stop_signs = [730; 1495];
+stop_signs = [727; 1190];
+%stop_signs = [730; 1495];
+%stop_signs = [];
+save('stop_signs', 'stop_signs');
 
-speed_limit_pos = [360 1360 624;1120 1000 1200] ; %SPEED LIMIT SIGNS POSITIONS
-speed_limit_vel = [5.5 2.77 6.5]; % [m/s]
+%speed_limit_pos = [360 1360 624;1120 1000 1200] ; %SPEED LIMIT SIGNS POSITIONS
+%speed_limit_vel = [5.5 2.77 6.5]; % [m/s]
+speed_limit_pos = [422; 1220];
+speed_limit_vel = [7]
 speed_limit_signs = [speed_limit_pos; speed_limit_vel];
 %speed_limit_signs=[];
-speed_limit_signs = speed_limit_signs(:,1);
+save('speed_limit_signs', 'speed_limit_signs');
+%speed_limit_signs = speed_limit_signs(:,1);
 
-%pedestrian_crossing_signs = [360 1360 624;1120 1000 1200] ; % PEDESTRIAN CROSSING SIGNS POSITIONS
-%pedestrian_crossing_times = [45 10 14; 10 5 4 ]; % [INICIO DA PASSAGEM; DURAÇÃO]
-
-pedestrian_crossing_signs = [360 1360 624;1120 1000 1200];
-pedestrian_crossing_signs=pedestrian_crossing_signs(:,3);
+%pedestrian_crossing_signs = [360 1360 624;1120 1000 1200];
+pedestrian_crossing_signs = [716; 835];
+%pedestrian_crossing_signs =[];
+save('pedestrian_crossing_signs', 'pedestrian_crossing_signs');
+pedestrian_crossing_pos = [457 2 3 ;535 2 3 ]; % PEDESTRIAN CROSSING SIGNS POSITIONS
+pedestrian_crossing_times = [460 20 30; 15 2 3]; % [INICIO DA PASSAGEM; DURAÇÃO]
+[~, I] = sort(pedestrian_crossing_times(1,:));
+pedestrian_crossing_pos = pedestrian_crossing_pos(:,I);
+pedestrian_crossing_times = pedestrian_crossing_times(:,I);
+%pedestrian_crossing_pos=[];
+%pedestrian_crossing_times=[];
 
 % CODE %%%
 [xq, vq] = get_path(p_inicial, p_final, G); %Gets all reference points in the path
@@ -45,17 +56,17 @@ x_path = cell2mat(paths(1)); %% 1º SUB PATH
 theta=theta_path(1);
 
 P0 = 1; v=0;v_phi=0;wait_count=0;path_counter=1;
-i=2;K=1;delta_t =0.1; 
+i=2;K=1;delta_t =0.1;
 prev_speed_limit=0;
 speed_limit=10; % [m/s] = 25,2 [km/h]
 while 1%K<=length(x_path)
-
-     if (norm(X(:,i-1)-x_path(:,K))<8) % DISTANCIA À REF 'k'
-        if K==length(x_path) %ULTIMA REF DO SUBPATH 
+    
+    if (norm(X(:,i-1)-x_path(:,K))<8) % DISTANCIA À REF 'k'
+        if K==length(x_path) %ULTIMA REF DO SUBPATH
             if v/delta_t< 0.25% VELOCIDADE +-=0
                 if length(paths)== path_counter %CHEGA AO DESTINO DO ULTIMO SUBPATH
                     break
-                else %WAITS 
+                else %WAITS
                     wait_count = wait_count+1;
                     if wait_count >= STOP_SIGN_WAITING_TIME/delta_t %SELECIONA NOVO SUBPATH
                         path_counter = path_counter+1;
@@ -63,7 +74,7 @@ while 1%K<=length(x_path)
                         [theta_path] = get_theta_path(x_path);
                         wait_count=0; K=1;
                     end
-                end            
+                end
             end
         else
             
@@ -75,10 +86,13 @@ while 1%K<=length(x_path)
                 speed_limit = speed_limit_ts;
             end
             K=K+1
-        end
-     end
+        end    
+    end
+    
     %CONTROLO
     [phi,v] = controlador(X(:,i-1),theta, x_path(:,K), theta_path(K+1), phi, v,v_phi, delta_t, speed_limit, prev_speed_limit);
+    %E4 - EVENT
+    [K] = pedestrian_crossing_handler(i*delta_t, pedestrian_crossing_pos, pedestrian_crossing_times, X(:,end), x_path, v, delta_t, K);
     %MODELO DO CARRO
     [X(:,i),theta]=robot(X(:,i-1),theta,phi,v, delta_t);
     
@@ -93,7 +107,7 @@ while 1%K<=length(x_path)
     else
         energy_spent(i) = (M*a_save(i) + P0)* abs(v) * delta_t;
     end
-   
+    
     i=i+1;
 end
 

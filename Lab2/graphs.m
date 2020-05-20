@@ -55,6 +55,8 @@ G = addedge(G, 29, 13 ,node_dist(G, 29, 13));
 G = addedge(G, 13, 12 ,node_dist(G, 13, 12));
 G = addedge(G, 12, 10 ,node_dist(G, 12, 10));
 G = addedge(G, 10, 14 ,node_dist(G, 10, 14));
+G = addedge(G, 15, 14 ,node_dist(G, 15, 14));
+G = addedge(G, 14, 15 ,node_dist(G, 14, 15));
 
 imshow(imread('ist_map_detail.png')); hold on
 %text( G.Nodes.X+10, G.Nodes.Y+10, G.Nodes.Name); hold
