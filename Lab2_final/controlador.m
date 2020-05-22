@@ -18,7 +18,8 @@ K_s = 0.01;
 K_i = 0.8;
 
 accel_tresh = 5; %[m^2/s]
-ACCEL_TRESH = accel_tresh * delta_t;
+%ACCEL_TRESH = accel_tresh * delta_t;
+MAX_ACCEL_TRESH = accel_tresh * delta_t;
 %v_thresh = %7; % [m/s] = 25,2 [km/h]
 V_TRESH = v_thresh * delta_t; 
 v = K_v*b_error(1);
@@ -35,6 +36,8 @@ alpha = alpha_rob + alpha_dot;
 [alpha, v] = non_linear_block(alpha,v);
 alpha_dot = (alpha- last_v_phi)/delta_t;
 accel = (v - last_v) / delta_t;
+
+[ACCEL_TRESH] = get_ACCEL(v,last_v, MAX_ACCEL_TRESH, delta_t);
 
 % LIMITE DE ACELERAÇÃO 
 if abs(accel) > ACCEL_TRESH

@@ -26,7 +26,6 @@ stop_signs = [];
 %speed_limit_pos = [360 1360 624;1120 1000 1200] ; %SPEED LIMIT SIGNS POSITIONS
 %speed_limit_vel = [5.5 2.77 6.5]; % [m/s]
 %speed_limit_pos = [422; 1220];
-speed_limit_pos = [];
 speed_limit_vel = [7]
 speed_limit_signs = [speed_limit_pos; speed_limit_vel];
 speed_limit_signs=[];
@@ -34,8 +33,8 @@ speed_limit_signs=[];
 %speed_limit_signs = speed_limit_signs(:,1);
 
 %pedestrian_crossing_signs = [360 1360 624;1120 1000 1200];
-%pedestrian_crossing_signs = [716; 835];
-pedestrian_crossing_signs =[];
+pedestrian_crossing_signs = [716; 835];
+%pedestrian_crossing_signs =[];
 %save('pedestrian_crossing_signs', 'pedestrian_crossing_signs');
 pedestrian_crossing_pos = [457 2 3 ;535 2 3 ]; % PEDESTRIAN CROSSING SIGNS POSITIONS
 pedestrian_crossing_times = [460 20 30; 15 2 3]; % [INICIO DA PASSAGEM; DURAÇÃO]
