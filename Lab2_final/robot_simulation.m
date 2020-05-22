@@ -1,49 +1,19 @@
-close all;
-clear all;
+function [phi_save,v_save, a_save, energy_spent, X, success] = robot_simulation(G, p_inicial, x_path, stop_signs,...
+    speed_limit_signs, pedestrian_crossing_signs, pedestrian_crossing_pos, pedestrian_crossing_times, MAX_BATTERY)
 
-p_inicial = [339;1330]; %USER INPUT %%%%%%%%%
-p_final = [385;537]; %USER INPUT %%%%%%%%%
-X= p_inicial; % COORDENADAS DO CARRO
+X=x_path(:,1); % COORDENADAS DO CARRO
 
 %DEFINES
 STOP_SIGN_WAITING_TIME = 1; %[s]
 M = 810; %[Kg]
 
-load G
 
 %VARS
 phi=0;
 v_save=[0];
 phi_save = 0;
 
-%stop_signs = [360 1360 624;1120 1000 1200] ; %STOP SIGNS POSITIONS
-stop_signs = [727; 1190];
-%stop_signs = [730; 1495];
-save('stop_signs', 'stop_signs');
-
-%speed_limit_pos = [360 1360 624;1120 1000 1200] ; %SPEED LIMIT SIGNS POSITIONS
-%speed_limit_vel = [5.5 2.77 6.5]; % [m/s]
-speed_limit_pos = [422; 1220];
-speed_limit_vel = [7]
-speed_limit_signs = [speed_limit_pos; speed_limit_vel];
-save('speed_limit_signs', 'speed_limit_signs');
-%speed_limit_signs = speed_limit_signs(:,1);
-
-%pedestrian_crossing_signs = [360 1360 624;1120 1000 1200];
-pedestrian_crossing_signs = [716; 835];
-save('pedestrian_crossing_signs', 'pedestrian_crossing_signs');
-% pedestrian_crossing_pos = [360 2 3 ;1120 2 3 ]; % PEDESTRIAN CROSSING SIGNS POSITIONS
-% pedestrian_crossing_times = [40 20 30; 20 2 3]; % [INICIO DA PASSAGEM; DURAÇÃO]
-% [~, I] = sort(pedestrian_crossing_times(1,:));
-% pedestrian_crossing_pos = pedestrian_crossing_pos(:,I);
-% pedestrian_crossing_times = pedestrian_crossing_times(:,I);
-pedestrian_crossing_pos=[];
-pedestrian_crossing_times=[];
-
-% CODE %%%
-[xq, vq] = get_path(p_inicial, p_final, G); %Gets all reference points in the path
-x_path = [xq; vq];
-
+%X_PATH
 paths=stop_sign_handler(stop_signs, x_path);
 
 % INIT 1º CICLO
@@ -51,7 +21,7 @@ x_path = cell2mat(paths(1)); %% 1º SUB PATH
 [theta_path] = get_theta_path(cell2mat(paths(1)));
 theta=theta_path(1);
 
-P0 = 1; v=0;v_phi=0;wait_count=0;path_counter=1;
+P0 = 10; v=0;v_phi=0;wait_count=0;path_counter=1;
 i=2;K=1;delta_t =0.1;
 prev_speed_limit=0;
 speed_limit=10; % [m/s] = 25,2 [km/h]
@@ -81,7 +51,7 @@ while 1%K<=length(x_path)
                 prev_speed_limit = speed_limit;
                 speed_limit = speed_limit_ts;
             end
-            K=K+1
+            K=K+1;
         end    
     end
     
@@ -103,21 +73,11 @@ while 1%K<=length(x_path)
     else
         energy_spent(i) = (M*a_save(i) + P0)* abs(v) * delta_t;
     end
-    
+    if sum(energy_spent)>= MAX_BATTERY
+        success =0;
+        return
+    end
     i=i+1;
 end
-
-figure;
-imshow(imread('ist_map_detail.png')); hold on
-scatter(x_path(1,:),x_path(2,:));
-hold on;
-plot(X(1,:),X(2,:));
-
-figure()
-plot( (1:length(a_save))*delta_t, a_save/delta_t);
-hold on
-plot( (1:length(a_save))*delta_t, v_save/delta_t);
-
-figure()
-plot( (1:length(phi_save))*delta_t, phi_save);
-
+success =1;
+end

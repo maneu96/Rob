@@ -29,15 +29,35 @@
 % %save nodes_coord;
 
 %%
-clear all
-close all
-load x, y;
-load nodes_coord
+% clear all
+% close all
+ load x, y;
+ load nodes_coord
 N = length(nodes_coord);
 G = digraph;
-G = addnode( G, cellstr(string(1:N)))
-G.Nodes.X= x';
-G.Nodes.Y= y';
+G = addnode( G, cellstr(string(1:N+2)))
+G.Nodes.X= [x 955 1220]';
+G.Nodes.Y= [y 13 75]';
+G.Nodes.X(27) = 753;
+G.Nodes.Y(27) = 1720;
+
+G.Nodes.X(28) = 792;
+G.Nodes.Y(28) = 1720;
+
+G.Nodes.X(34) = 20;
+G.Nodes.Y(34) = 144;
+
+G.Nodes.X(23) = 416;
+G.Nodes.Y(23) = 1460;
+
+G.Nodes.X(22) = 358;
+G.Nodes.Y(22) = 1460;
+
+% G.Nodes.X(end+1) = 955;
+% G.Nodes.Y(end +1) = 13;
+% 
+% G.Nodes.X(end+1) = 1220;
+% G.Nodes.Y(end +1) = 75;
 
 G = addedge(G, 14, 19 ,node_dist(G, 14, 19));
 G = addedge(G, 19, 20 ,node_dist(G, 19, 20));
@@ -53,10 +73,53 @@ G = addedge(G, 26, 27 ,node_dist(G, 26, 27));
 G = addedge(G, 26, 29 ,node_dist(G, 26, 29));
 G = addedge(G, 29, 13 ,node_dist(G, 29, 13));
 G = addedge(G, 13, 12 ,node_dist(G, 13, 12));
-G = addedge(G, 12, 10 ,node_dist(G, 12, 10));
 G = addedge(G, 10, 14 ,node_dist(G, 10, 14));
 G = addedge(G, 15, 14 ,node_dist(G, 15, 14));
+G = addedge(G, 28, 29 ,node_dist(G, 28, 29));
+G = addedge(G, 29, 30 ,node_dist(G, 29, 30));
+G = addedge(G, 30, 31 ,node_dist(G, 30, 31));
+G = addedge(G, 31, 32 ,node_dist(G, 31, 32));
+G = addedge(G, 32, 33 ,node_dist(G, 32, 33));
+G = addedge(G, 10, 12 ,node_dist(G, 10, 12));
+G = addedge(G, 12, 11 ,node_dist(G, 12, 11));
+G = addedge(G, 11, 10 ,node_dist(G, 11, 10));
+G = addedge(G, 3, 10 ,node_dist(G, 3, 10));
+G = addedge(G, 13, 25 ,node_dist(G, 13, 25));
+G = addedge(G, 11, 4 ,node_dist(G, 11, 4));
+G = addedge(G, 3, 4 ,node_dist(G, 3, 4));
+G = addedge(G, 4, 5 ,node_dist(G, 4, 5));
+G = addedge(G, 5, 6 ,node_dist(G, 5, 6));
+G = addedge(G, 6, 7 ,node_dist(G, 6, 7));
+G = addedge(G, 7, 8 ,node_dist(G, 7, 8));
+G = addedge(G, 8, 9 ,node_dist(G, 8, 9));
+G = addedge(G, 1, 3 ,node_dist(G, 1, 3));
+G = addedge(G, 4, 2 ,node_dist(G, 4, 2));
+G = addedge(G, 1, 2 ,node_dist(G, 1, 2));
+G = addedge(G, 34, 1 ,node_dist(G, 34, 1));
+G = addedge(G, 15, 16 ,node_dist(G, 15, 16));
+G = addedge(G, 16, 15 ,node_dist(G, 16, 15));
+G = addedge(G, 17, 16,node_dist(G, 17, 16));
+G = addedge(G, 16, 17 ,node_dist(G, 16, 17));
+G = addedge(G, 17, 18 ,node_dist(G, 17, 18));
+G = addedge(G, 18, 17 ,node_dist(G, 18, 17));
+G = addedge(G, 12, 13 ,node_dist(G, 12, 13));
 G = addedge(G, 14, 15 ,node_dist(G, 14, 15));
+G = addedge(G, 33, 32 ,node_dist(G, 33, 32));
+G = addedge(G, 32, 31 ,node_dist(G, 32, 31));
+G = addedge(G, 31, 30 ,node_dist(G, 31, 30));
+G = addedge(G, 30, 29 ,node_dist(G, 30, 29));
+G = addedge(G, 9, 8 ,node_dist(G, 9, 8));
+G = addedge(G, 8, 7 ,node_dist(G, 8, 7));
+G = addedge(G, 7, 6 ,node_dist(G, 7, 6));
+G = addedge(G, 6, 5 ,node_dist(G, 6, 5));
+G = addedge(G, 5, 4 ,node_dist(G, 5, 4));
+G = addedge(G, 2, 35 ,node_dist(G, 2, 35));
+G = addedge(G, 35, 36 ,node_dist(G, 35, 36));
+G = addedge(G, 4, 3 ,node_dist(G, 4, 3));
+
+save('G', 'G');
+
+
 
 imshow(imread('ist_map_detail.png')); hold on
 %text( G.Nodes.X+10, G.Nodes.Y+10, G.Nodes.Name); hold

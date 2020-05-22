@@ -1,10 +1,14 @@
-function [ret] = pedestrian_crossing_handler(sim_time, pedestrian_crossing_pos, pedestrian_crossing_times, X, x_path, v, delta_t, K )
+function [K] = pedestrian_crossing_handler(sim_time, pedestrian_crossing_pos, pedestrian_crossing_times, X, x_path, v, delta_t, K )
 PEDESTRIAN_CROSSING_VISIBILITY = 20; %[m]
 SAFETY_TIME_TRESH = 2; %[s]
+V_STOP_TRESH = 0.3; %[m/s]
+if isempty(pedestrian_crossing_pos)
+   return 
+end
 
 x_scale = 0.18107;
 y_scale = 0.21394;
-ret=K;
+
 valid_crossings_idx = find((pedestrian_crossing_times(1,:)+ pedestrian_crossing_times(2,:)) - sim_time >0);
 if isempty(valid_crossings_idx)
    return 
@@ -40,10 +44,12 @@ t_car_crossing = dist_int/v; %[s]
 
 if   (sim_time + t_car_crossing > valid_crossings_times(1,1)-SAFETY_TIME_TRESH &&  sim_time + t_car_crossing < valid_crossings_times(1,1)+valid_crossings_times(2,1)+SAFETY_TIME_TRESH)
     %ROTA DE COLISÃO
-    ret = X_idx + (next_speed_sign_path-1);
+    K = X_idx + (next_speed_sign_path-1);
 
     
-elseif v
+elseif v < V_STOP_TRESH && sim_time < valid_crossings_times(1,1)+valid_crossings_times(2,1)+SAFETY_TIME_TRESH
+    K = X_idx + (next_speed_sign_path-1);
 end
+
 end
 
