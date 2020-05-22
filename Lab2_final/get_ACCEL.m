@@ -1,9 +1,8 @@
 function [ACCEL_TRESH] = get_ACCEL(v,last_v, MAX_ACCEL_TRESH, delta_t)
-tau= 0.5;
+tau= 0.3;
 
 func_A= @(V) MAX_ACCEL_TRESH*exp(-tau*V);
-v_avg= (v-last_v)/2;
-v_aux = v_avg/delta_t; %[m/s]
+v_aux = last_v/delta_t; %[m/s]
 
 ACCEL_TRESH=func_A(v_aux);
 

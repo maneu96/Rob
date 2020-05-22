@@ -55,12 +55,6 @@ for j = 1:size(valid_crossings_pos_aux, 2)
         K_aux  =[ K_aux X_idx + (next_speed_sign_path-1)];
     end
 end
-
-if isempty(K_aux)
-    ret = K;
-else
-    ret = min(K_aux)
-end
-
+ret = min(K_aux = [];);
 end
 

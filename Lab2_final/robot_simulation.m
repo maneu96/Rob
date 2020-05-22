@@ -56,6 +56,7 @@ while 1%K<=length(x_path)
     end
     
     %CONTROLO
+    i
     [phi,v] = controlador(X(:,i-1),theta, x_path(:,K), theta_path(K+1), phi, v,v_phi, delta_t, speed_limit, prev_speed_limit);
     %E4 - EVENT
     [K] = pedestrian_crossing_handler(i*delta_t, pedestrian_crossing_pos, pedestrian_crossing_times, X(:,end), x_path, v, delta_t, K);
